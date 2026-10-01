@@ -46,7 +46,10 @@ def gerar_relatorio(
             {"Métrica": "Registros inválidos", "Valor": len(df_invalidos)},
             {"Métrica": "Percentual de sucesso", "Valor": f"{pct_sucesso:.1f}%"},
             {"Métrica": "Tempo de execução (segundos)", "Valor": f"{tempo_execucao_segundos:.2f}"},
-            {"Métrica": "Data/hora do processamento", "Valor": datetime.now().strftime("%d/%m/%Y %H:%M:%S")},
+            {
+                "Métrica": "Data/hora do processamento",
+                "Valor": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+            },
         ]
     )
 
