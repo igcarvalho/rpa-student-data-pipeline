@@ -1,0 +1,26 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# --- Test / lint caches ---
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# --- Environment / secrets ---
+.env
+
+# --- Project data (mantém só os .gitkeep) ---
+data/input/*
+!data/input/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/output/*
+!data/output/.gitkeep
+logs/*
+!logs/.gitkeep
