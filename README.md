@@ -204,6 +204,78 @@ Este projeto implementa em Python o mesmo fluxo que ferramentas de RPA como **Ui
 
 A lógica é a mesma — o que muda é a forma de expressá-la. Em Python, temos mais flexibilidade e controle; nas ferramentas de RPA, temos uma interface visual e integrações prontas com sistemas corporativos.
 
+## Versão UiPath
+
+Este mesmo fluxo pode ser implementado no UiPath com as seguintes atividades:
+
+### Fluxo principal
+
+```
+[Start]
+   ↓
+[Read Range] ← Lê a planilha Excel (data/input/matriculas.xlsx)
+   ↓
+[For Each] ← Itera cada linha da planilha
+   ↓
+[If] ← Valida os campos (CPF, e-mail, data, curso)
+   ↓
+[Insert/Update] ← Grava no PostgreSQL (upsert idempotente)
+   ↓
+[Write Range] ← Gera o relatório Excel (3 abas)
+   ↓
+[Move File] ← Move o arquivo para data/processed/
+   ↓
+[End]
+```
+
+### Atividades por etapa
+
+| Etapa | Atividade UiPath | Equivalente Python | Descrição |
+|---|---|---|---|
+| Ler planilha | **Read Range** | `pandas.read_excel()` | Lê o Excel e devolve um DataTable |
+| Iterar linhas | **For Each** | `for _, row in df.iterrows()` | Para cada linha, executa as atividades internas |
+| Validar campos | **If** + **Else** | `if not validar_cpf(cpf):` | Verifica cada regra de validação |
+| Gravar no banco | **Insert/Update** | SQLAlchemy upsert | Grava ou atualiza o registro no PostgreSQL |
+| Gerar relatório | **Write Range** | `pandas.ExcelWriter()` | Escreve o DataTable no Excel |
+| Mover arquivo | **Move File** | `shutil.move()` | Move o arquivo processado com timestamp |
+| Tratar erro | **Try Catch** | `try/except` | Captura exceções e registra no log |
+| Agendar | **Orchestrator** | `docker compose up` / cron | Agenda e monitora a execução |
+
+### Validação no UiPath
+
+No UiPath, cada regra de validação seria implementada com atividades **If** aninhadas:
+
+```
+[If] ← nome está vazio?
+   ↓ Sim
+[Add to List] ← Adiciona à lista de inválidos
+   ↓ Não
+[If] ← CPF é inválido?
+   ↓ Sim
+[Add to List] ← Adiciona à lista de inválidos
+   ↓ Não
+[If] ← E-mail é inválido?
+   ↓ ...
+```
+
+### Diferenças entre Python e UiPath
+
+| Aspecto | Python | UiPath |
+|---|---|---|
+| Interface | Código | Visual (blocos conectados) |
+| Curva de aprendizado | Média | Baixa |
+| Flexibilidade | Alta | Média |
+| Integrações | Via bibliotecas | Nativas (Excel, SAP, etc.) |
+| Depuração | Logs + debugger | Debugger visual + logs |
+| Custo | Gratuito | Licença paga (Community Edition gratuita) |
+
+### Por que aprender UiPath?
+
+- É a ferramenta de RPA mais usada no mercado corporativo
+- A YDUQS e outras grandes empresas utilizam UiPath
+- A lógica de automação é a mesma — o que muda é a interface
+- Facilita a transição para projetos reais de RPA
+
 ## Licença
 
 Projeto de portfólio para fins educacionais. Dados 100% fictícios.
