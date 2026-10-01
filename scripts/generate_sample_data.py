@@ -96,10 +96,19 @@ def introduzir_erros(df: pd.DataFrame, random_state: int = 42) -> pd.DataFrame:
 
     # 2. CPFs inválidos (~8%)
     for idx in pegar(int(total * 0.08)):
-        df.at[idx, "cpf"] = f"{rng.randint(100, 999)}.{rng.randint(100, 999)}.{rng.randint(100, 999)}-00"
+        parte1 = rng.randint(100, 999)
+        parte2 = rng.randint(100, 999)
+        parte3 = rng.randint(100, 999)
+        df.at[idx, "cpf"] = f"{parte1}.{parte2}.{parte3}-00"
 
     # 3. E-mails mal formatados (~8%)
-    emails_errados = ["aluno@.com", "aluno@dominio", "aluno dominio.com", "@dominio.com", "aluno@dominio."]
+    emails_errados = [
+        "aluno@.com",
+        "aluno@dominio",
+        "aluno dominio.com",
+        "@dominio.com",
+        "aluno@dominio.",
+    ]
     for idx in pegar(int(total * 0.08)):
         df.at[idx, "email"] = rng.choice(emails_errados)
 
@@ -138,8 +147,11 @@ def gerar_planilha(rows: int = 200) -> pd.DataFrame:
 
 def main() -> None:
     """Ponto de entrada do script: gera e salva a planilha de entrada."""
-    parser = argparse.ArgumentParser(description="Gera planilha de matrículas fictícias com erros.")
-    parser.add_argument("--output", default="data/input/matriculas.xlsx", help="Caminho do arquivo de saída")
+    descricao = "Gera planilha de matrículas fictícias com erros."
+    parser = argparse.ArgumentParser(description=descricao)
+    parser.add_argument(
+        "--output", default="data/input/matriculas.xlsx", help="Caminho do arquivo de saída"
+    )
     parser.add_argument("--rows", type=int, default=200, help="Número de linhas a gerar")
     args = parser.parse_args()
 
