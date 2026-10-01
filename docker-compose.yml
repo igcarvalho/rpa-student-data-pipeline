@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: rpa_students
+      POSTGRES_USER: rpa_user
+      POSTGRES_PASSWORD: rpa_password
+    # Porta não exposta no host: o robô se conecta pela rede interna do Docker.
+    # Para acessar o banco externamente, descomente a linha abaixo.
+    # ports:
+    #   - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rpa_user -d rpa_students"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  robot:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: rpa_students
+      DB_USER: rpa_user
+      DB_PASSWORD: rpa_password
+      INPUT_DIR: data/input
+      PROCESSED_DIR: data/processed
+      OUTPUT_DIR: data/output
+      LOG_DIR: logs
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+
+volumes:
+  postgres_data:
